@@ -1,0 +1,46 @@
+{
+  "short_name": "LifeRoute",
+  "name": "LifeRoute - Emergency Healthcare Coordination",
+  "description": "Real-time emergency dispatch, ambulance live tracking, AI triage, and hospital coordination.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#020617",
+  "theme_color": "#2563eb",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["medical", "health", "lifestyle", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Request Emergency Ambulance",
+      "short_name": "Emergency SOS",
+      "description": "Instant 1-tap ambulance request",
+      "url": "/?screen=request_ambulance",
+      "icons": [{ "src": "/favicon.ico", "sizes": "64x64" }]
+    },
+    {
+      "name": "Find Nearby Hospitals",
+      "short_name": "Hospitals",
+      "description": "View ER hospital beds & specialties",
+      "url": "/?screen=nearby_hospitals",
+      "icons": [{ "src": "/favicon.ico", "sizes": "64x64" }]
+    }
+  ]
+}
