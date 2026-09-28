@@ -3,7 +3,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.liferoute.emergency",
   appName: "LifeRoute",
-  webDir: "dist/client",
+  webDir: "dist",
   bundledWebRuntime: false,
   server: {
     androidScheme: "https",
