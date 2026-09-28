@@ -92,6 +92,7 @@ function LifeRouteInteractiveExperience() {
   const [viewMode, setViewMode] = useState<"mobile_frame" | "responsive_flow">("mobile_frame");
   const [bottomNavTab, setBottomNavTab] = useState<"home" | "map" | "history" | "profile">("home");
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showInstallModal, setShowInstallModal] = useState(false);
 
   React.useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -102,17 +103,40 @@ function LifeRouteInteractiveExperience() {
     return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
   }, []);
 
-  const handleInstallApp = async () => {
-    if (installPrompt) {
-      installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
-      if (choice.outcome === "accepted") {
-        showToast("✓ LifeRoute App installed successfully!");
-        setInstallPrompt(null);
-      }
-    } else {
-      showToast("To install, tap Share (iOS) or Menu (Android) → 'Add to Home Screen'");
+  const triggerDirectDownload = () => {
+    try {
+      const link = document.createElement("a");
+      link.href = "/downloads/LifeRoute-Emergency.apk";
+      link.setAttribute("download", "LifeRoute-Emergency.apk");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch {
+      // fallback
     }
+  };
+
+  const handleInstallApp = async () => {
+    sound.playSuccess();
+    // 1. Immediately trigger direct file download
+    triggerDirectDownload();
+
+    // 2. Also trigger native browser PWA install prompt if supported
+    if (installPrompt) {
+      try {
+        installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        if (choice.outcome === "accepted") {
+          setInstallPrompt(null);
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // 3. Show download completion dialog
+    setShowInstallModal(true);
+    showToast("📥 LifeRoute App download started directly!");
   };
 
   const navigateTo = (screen: string) => {
@@ -469,6 +493,64 @@ function LifeRouteInteractiveExperience() {
           LifeRoute • Smarter Coordination. Faster Care. Safer Lives.
         </p>
       </footer>
+
+      {/* Direct App Download & Installation Dialog Modal */}
+      {showInstallModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-md bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-blue-50 text-blue-600">
+                  <Smartphone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900">LifeRoute App Download</h3>
+                  <p className="text-xs text-slate-500">Android APK & PWA Package v1.0.0</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowInstallModal(false)}
+                className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 text-xs text-emerald-900 font-semibold flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Direct download started: <b>LifeRoute-Emergency.apk</b></span>
+            </div>
+
+            <div className="space-y-2 text-xs text-slate-600">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="font-bold text-slate-900 mb-0.5">📱 Android Installation:</div>
+                <p>1. Open the downloaded <code>LifeRoute-Emergency.apk</code> file in your Downloads.</p>
+                <p>2. Tap "Install" to install directly on your phone.</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="font-bold text-slate-900 mb-0.5">🍎 iOS / Safari (iPhone/iPad):</div>
+                <p>Tap <b>Share (⬆️)</b> → <b>"Add to Home Screen"</b> to install as an edge-to-edge native app.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={triggerDirectDownload}
+                className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>📥 Download Again (.APK)</span>
+              </button>
+              <button
+                onClick={() => setShowInstallModal(false)}
+                className="px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

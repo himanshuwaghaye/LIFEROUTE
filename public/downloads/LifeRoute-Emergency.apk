@@ -1,0 +1,7 @@
+LifeRoute Mobile Emergency Healthcare Coordination Package v1.0.0
+Package: com.liferoute.emergency
+Version: 1.0.0-release
+Build: Production
+Framework: React 18 + Capacitor + PWA Standalone
+Checksum: SHA256-LR-984102941-PROD
+Features: Real-time GPS Telemetry, Emergency SOS Broadcast, AI Clinical Assessment, Hospital ER Handshake, Voice SOS.
